@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>RxJs-Canvas</title>
+        <script>var exports = {};</script>
+        <script src="http://requirejs.org/docs/release/2.3.6/comments/require.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/rxjs/7.8.1/rxjs.umd.min.js"></script>
+    </head>
+    <body>
+        <canvas id="canvas" width="800" height="800" style="border: 1px black solid;"></canvas>
+    </body>
+    <script type="text/javascript">
+        require.config({
+          paths: {
+              "rxjs": "https://cdnjs.cloudflare.com/ajax/libs/rxjs/7.8.1/rxjs.umd.min.js",
+          },
+          waitSeconds: 5
+        });
+        </script>
+        <script type="text/javascript">
+                const canvas = document.getElementById('canvas');
+                const ctx = canvas.getContext('2d');
+                function drawCircle(x, y) {
+                    ctx.beginPath();
+                    ctx.arc(x, y, 5+ Math.random() * 10, 0, Math.PI * 2)
+                    ctx.fillStyle = getRandomColor()
+                    ctx.globalAlpha = Math.random()
+                    ctx.fill()
+                }
+                function getRandomColor() {
+                    var letters = '0123456789ABCDEF';
+                    var color = '#';
+                    for (var i = 0; i < 6; i++) {
+                        color += letters[Math.floor(Math.random() * 16)];
+                        }
+                    return color;
+                }
+                require (['rxjs'], (x) => stream(x));
+                function stream(x){
+                    var sourceStream = x.fromEvent(document, 'mousemove');
+                    var subscription = sourceStream.pipe(x.auditTime(100)).pipe(x.debounceTime(100)).subscribe((e)=> {
+                          console.log(new Date().toLocaleString(), `x:${e.clientX},y:${e.clientY}`);
+                          drawCircle(e.clientX, e.clientY)
+                    });
+                }
+      </script>
+</html>
