@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>RxJs</title>
+        <script>var exports = {};</script>
+        <script src="http://requirejs.org/docs/release/2.3.6/comments/require.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/rxjs/7.8.1/rxjs.umd.min.js"></script>
+        <script type="text/javascript">
+        require.config({
+          paths: {
+              "rxjs": "https://cdnjs.cloudflare.com/ajax/libs/rxjs/7.8.1/rxjs.umd.min.js",
+              "jquery": "https://ajax.googleapis.com/ajax/libs/jquery/1.8.1/jquery.min"
+          },
+          waitSeconds: 5
+        });
+        </script>
+        <script type="text/javascript">
+        require( ["jquery"],
+               ($)=>console.log(`jQuery said:${$("#myButton").val()}`)
+        );
+        require ( ['rxjs'], 
+            (x) => {
+                console.log('Loaded :)');
+
+                x.of(1, 2, 3, 4, 5)
+                   .subscribe(console.log);
+
+                x.of(1, 2, 3, 4, 5).pipe(x.switchMap(() => x.of('qwerty')))
+                    .subscribe(console.log);
+                });
+
+                var rxjs_1 = require (['rxjs'], (x) => start(x));
+                async function start(){
+                    const x = await new Promise(r => require (['rxjs'], r));
+                    x.of(6,7,8,9,10).subscribe(console.log);
+                }
+
+                var rxjs_2 = require (['rxjs'], (x) => debounce(x));
+                function debounce(x){
+                    var button = document.getElementById('myButton');
+                    // Create an Observable from a button click event
+                    var clickObservable = (0, x.fromEvent)(button, 'click');
+                    // Use the debounceTime() operator to emit the latest click after 1 s
+                    var debouncedObservable = clickObservable.pipe((0, x.debounceTime)(1000));
+                    // Subscribe to the debounced Observable
+                    var subscription = debouncedObservable.subscribe(function () { return console.log('Button clicked!', new Date().toLocaleString())});
+                }
+
+                var rxjs_3 = require (['rxjs'], (x) => stream(x));
+                function stream(x){
+                    var sourceStream = x.fromEvent(document, 'mousemove');
+                    var subscription = sourceStream.pipe(x.auditTime(500)).subscribe((e)=> {
+                          console.log(new Date().toLocaleString(), `x:${e.clientX},y:${e.clientY}`);
+                    });
+                }
+      </script>
+    </head>
+    <body>
+        <input id="myButton" type="button" value="click me">
+    </body>
+</html>
